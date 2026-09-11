@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: voting-db
+    environment:
+      POSTGRES_DB: voting
+      POSTGRES_USER: voting
+      POSTGRES_PASSWORD: voting
+    ports:
+      - "5432:5432"
+    volumes:
+      - voting-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voting -d voting"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: voting-api
+    depends_on:
+      db:
+        # Garante que a API suba somente depois que o Postgres estiver pronto
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: voting
+      DB_USER: voting
+      DB_PASSWORD: voting
+    ports:
+      - "8080:8080"
+
+volumes:
+  voting-db-data:
