@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: voting-api
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:voting}
+    username: ${DB_USER:voting}
+    password: ${DB_PASSWORD:voting}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+sicredi:
+  voting:
+    default-session-duration: 60s
+  member-validation:
+    enabled: true
+    base-url: https://user-info-mock.vercel.app
+    connect-timeout-ms: 3000
+    read-timeout-ms: 3000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.sicredi.voting: INFO
