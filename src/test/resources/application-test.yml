@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop 
+
+sicredi:
+  voting:
+    default-session-duration: 60s
+  member-validation:
+    enabled: false
+    base-url: http://localhost:1
+    connect-timeout-ms: 1000
+    read-timeout-ms: 1000
