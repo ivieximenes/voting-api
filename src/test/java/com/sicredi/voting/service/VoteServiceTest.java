@@ -20,6 +20,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,25 +39,34 @@ class VoteServiceTest {
     @Mock
     private VotingSessionService sessionService;
 
+    @Mock
+    private MemberValidationService memberValidationService;
+
     private VoteService voteService;
 
     @BeforeEach
     void setUp() {
-        voteService = new VoteService(voteRepository, topicService, sessionService);
+        voteService = new VoteService(
+                voteRepository,
+                topicService,
+                sessionService,
+                memberValidationService);
     }
 
     @Test
-    void shouldRegisterVoteWhenSessionIsOpen() {
+    void shouldRegisterVoteWhenSessionIsOpenAndMemberIsEligible() {
         Topic topic = new Topic("Title", "Desc");
         VotingSession session = new VotingSession(1L, 60);
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findByTopicId(1L)).thenReturn(session);
+        doNothing().when(memberValidationService).validate(VALID_CPF);
         when(voteRepository.save(any(Vote.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Vote vote = voteService.vote(1L, VALID_CPF, VoteOption.SIM);
 
         assertThat(vote.getMemberId()).isEqualTo(VALID_CPF);
         assertThat(vote.getOption()).isEqualTo(VoteOption.SIM);
+        verify(memberValidationService).validate(VALID_CPF);
     }
 
     @Test
@@ -70,11 +82,27 @@ class VoteServiceTest {
     }
 
     @Test
+    void shouldPropagateMemberValidationError() {
+        Topic topic = new Topic("Title", "Desc");
+        VotingSession session = new VotingSession(1L, 60);
+        when(topicService.findById(1L)).thenReturn(topic);
+        when(sessionService.findByTopicId(1L)).thenReturn(session);
+        doThrow(new ResponseStatusException(
+                        HttpStatus.UNPROCESSABLE_ENTITY, "Associado não elegível"))
+                .when(memberValidationService).validate(VALID_CPF);
+
+        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.SIM))
+                .isInstanceOfSatisfying(ResponseStatusException.class,
+                        ex -> assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY));
+    }
+
+    @Test
     void shouldThrowConflictWhenVoteIsDuplicated() {
         Topic topic = new Topic("Title", "Desc");
         VotingSession session = new VotingSession(1L, 60);
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findByTopicId(1L)).thenReturn(session);
+        doNothing().when(memberValidationService).validate(VALID_CPF);
         when(voteRepository.save(any(Vote.class)))
                 .thenThrow(new DataIntegrityViolationException("duplicate"));
 
