@@ -7,4 +7,4 @@ logging:
   level:
     com.sicredi.voting: DEBUG
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE   # mostra os parâmetros
+    org.hibernate.type.descriptor.sql: TRACE
