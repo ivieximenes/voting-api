@@ -47,4 +47,20 @@ public abstract class AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         return objectMapper.readTree(response).get("id").asLong();
     }
+
+    protected void openSession(Long topicId, Integer durationSeconds) throws Exception {
+        var request = new OpenSessionRequest(durationSeconds);
+        mockMvc.perform(post("/api/v1/topics/{id}/sessions", topicId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
+    }
+
+    protected void registerVote(Long topicId, String memberId, VoteOption option) throws Exception {
+        var request = new RegisterVoteRequest(memberId, option);
+        mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
+    }
 }
