@@ -1,5 +1,6 @@
 package com.sicredi.voting.domain;
 
+import com.sicredi.voting.enums.SessionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +42,10 @@ public class VotingSession {
     @Column(name = "duration_seconds", nullable = false, updatable = false)
     private int durationSeconds;
 
+    public VotingSession(Long topicId, int durationSeconds) {
+        this(topicId, durationSeconds, Instant.now());
+    }
+
     public VotingSession(Long topicId, int durationSeconds, Instant openedAt) {
         this.topicId = topicId;
         this.durationSeconds = durationSeconds;
@@ -50,5 +55,17 @@ public class VotingSession {
 
     public boolean isOpen(Instant now) {
         return now.isBefore(closesAt);
+    }
+
+    public boolean isOpen() {
+        return isOpen(Instant.now());
+    }
+
+    public SessionStatus status(Instant now) {
+        return isOpen(now) ? SessionStatus.OPEN : SessionStatus.CLOSED;
+    }
+
+    public SessionStatus status() {
+        return status(Instant.now());
     }
 }
