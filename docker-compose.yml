@@ -29,7 +29,6 @@ services:
       DB_NAME: voting
       DB_USER: voting
       DB_PASSWORD: voting
-      SPRING_PROFILES_ACTIVE: dev
     ports:
       - "8080:8080"
 
