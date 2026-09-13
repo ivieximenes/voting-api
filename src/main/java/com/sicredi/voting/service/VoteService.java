@@ -20,14 +20,17 @@ public class VoteService {
     private final VoteRepository voteRepository;
     private final TopicService topicService;
     private final VotingSessionService sessionService;
+    private final MemberValidationService memberValidationService;
 
     public VoteService(
             VoteRepository voteRepository,
             TopicService topicService,
-            VotingSessionService sessionService) {
+            VotingSessionService sessionService,
+            MemberValidationService memberValidationService) {
         this.voteRepository = voteRepository;
         this.topicService = topicService;
         this.sessionService = sessionService;
+        this.memberValidationService = memberValidationService;
     }
 
     @Transactional
@@ -40,6 +43,8 @@ public class VoteService {
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Sessão de votação encerrada para pauta: id=" + topicId);
         }
+
+        memberValidationService.validate(memberId);
 
         try {
             Vote vote = new Vote(topicId, memberId, option);
