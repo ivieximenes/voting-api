@@ -4,6 +4,7 @@ import com.sicredi.voting.domain.Topic;
 import com.sicredi.voting.service.TopicService;
 import com.sicredi.voting.web.dto.CreateTopicRequest;
 import com.sicredi.voting.web.dto.TopicResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/topics")
+@Tag(name = "Topics", description = "Assembly topics management")
 public class TopicController {
 
     private final TopicService topicService;

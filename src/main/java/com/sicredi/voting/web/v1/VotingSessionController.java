@@ -5,6 +5,7 @@ import com.sicredi.voting.service.VotingSessionService;
 import com.sicredi.voting.web.dto.OpenSessionRequest;
 import com.sicredi.voting.web.dto.VotingSessionResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/topics/{topicId}/sessions")
+@Tag(name = "Voting Sessions", description = "Voting session lifecycle for a topic")
 public class VotingSessionController {
 
     private final VotingSessionService sessionService;
