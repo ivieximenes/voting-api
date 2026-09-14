@@ -29,6 +29,7 @@ services:
       DB_NAME: voting
       DB_USER: voting
       DB_PASSWORD: voting
+      MEMBER_VALIDATION_ENABLED: "false"
     ports:
       - "8080:8080"
 
