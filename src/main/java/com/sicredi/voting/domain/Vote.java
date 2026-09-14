@@ -21,6 +21,8 @@ import java.time.Instant;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "vote",
+        // Garante "um voto por associado por pauta" no nível do banco,
+        // não só na regra de negócio, cobrindo requisições concorrentes.
         uniqueConstraints = @UniqueConstraint(
                 name = "uk_vote_topic_member",
                 columnNames = {"topic_id", "member_id"}

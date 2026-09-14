@@ -30,6 +30,8 @@ public final class CpfValidator {
         }
     }
 
+    // Cada dígito é multiplicado por um peso decrescente
+    // (a partir de length+1) e o dígito verificador vem do resto da soma por 11.
     private static int calculateDigit(String digits, int length) {
         int sum = 0;
         for (int i = 0; i < length; i++) {

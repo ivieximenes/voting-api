@@ -77,6 +77,8 @@ public class ScreenController {
     private SelectionItem toSelectionItem(Topic topic) {
         Optional<VotingSession> session = sessionService.findOptionalByTopicId(topic.getId());
 
+        // Sessão aberta: leva à tela de voto. Caso contrário (sem sessão ou já encerrada):
+        // leva direto ao endpoint REST de resultado, que não precisa de formato de tela.
         String url = (session.isPresent() && session.get().isOpen())
                 ? baseUrl + "/api/v1/screens/topics/" + topic.getId() + "/vote"
                 : baseUrl + "/api/v1/topics/" + topic.getId() + "/result";
