@@ -126,8 +126,8 @@ public class ScreenController {
         String votesUrl = baseUrl + "/api/v1/topics/" + topic.getId() + "/votes";
 
         List<SelectionItem> itens = List.of(
-                SelectionItem.of("Sim", votesUrl, Map.of("option", "SIM")),
-                SelectionItem.of("Não", votesUrl, Map.of("option", "NAO"))
+                SelectionItem.of("Sim", votesUrl, Map.of("option", "YES")),
+                SelectionItem.of("Não", votesUrl, Map.of("option", "NO"))
         );
 
         return SelectionScreen.of(topic.getTitle(), itens);
