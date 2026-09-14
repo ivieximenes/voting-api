@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS vote (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     topic_id BIGINT NOT NULL,
     member_id VARCHAR(11) NOT NULL,
-    vote_option VARCHAR(10) NOT NULL CHECK (vote_option IN ('SIM', 'NAO')),
+    vote_option VARCHAR(10) NOT NULL CHECK (vote_option IN ('YES', 'NO')),
     voted_at TIMESTAMP WITH TIME ZONE NOT NULL,
     CONSTRAINT uk_vote_topic_member UNIQUE (topic_id, member_id)
 );
