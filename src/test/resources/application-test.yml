@@ -8,6 +8,8 @@ spring:
 sicredi:
   voting:
     default-session-duration: 60s
+  app:
+    base-url: http://localhost:8080
   member-validation:
     enabled: false
     base-url: http://localhost:1
