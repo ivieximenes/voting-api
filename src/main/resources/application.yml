@@ -27,7 +27,7 @@ sicredi:
     default-session-duration: 60s
   member-validation:
     enabled: true
-    base-url: https://user-info-mock.vercel.app
+    base-url: https://user-info-woad.vercel.app
     connect-timeout-ms: 3000
     read-timeout-ms: 3000
 
