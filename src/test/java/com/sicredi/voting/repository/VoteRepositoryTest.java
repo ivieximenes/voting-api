@@ -41,19 +41,19 @@ class VoteRepositoryTest {
 
     @Test
     void shouldSaveVote() {
-        var vote = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.SIM);
+        var vote = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.YES);
 
         var saved = repository.save(vote);
 
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getTopicId()).isEqualTo(TOPIC_ID);
         assertThat(saved.getMemberId()).isEqualTo(MEMBER_ID);
-        assertThat(saved.getOption()).isEqualTo(VoteOption.SIM);
+        assertThat(saved.getOption()).isEqualTo(VoteOption.YES);
     }
 
     @Test
     void shouldFindVoteById() {
-        var vote = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.SIM);
+        var vote = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.YES);
         var saved = repository.save(vote);
 
         var found = repository.findById(saved.getId());
@@ -72,7 +72,7 @@ class VoteRepositoryTest {
 
     @Test
     void shouldDeleteVote() {
-        var vote = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.SIM);
+        var vote = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.YES);
         var saved = repository.save(vote);
 
         repository.deleteById(saved.getId());
@@ -83,18 +83,18 @@ class VoteRepositoryTest {
 
     @Test
     void shouldCountTotalVotes() {
-        repository.save(new Vote(TOPIC_ID, "11111111111", VoteOption.SIM));
-        repository.save(new Vote(TOPIC_ID, "22222222222", VoteOption.NAO));
-        repository.save(new Vote(2L, "33333333333", VoteOption.SIM));
+        repository.save(new Vote(TOPIC_ID, "11111111111", VoteOption.YES));
+        repository.save(new Vote(TOPIC_ID, "22222222222", VoteOption.NO));
+        repository.save(new Vote(2L, "33333333333", VoteOption.YES));
 
         assertThat(repository.count()).isEqualTo(3);
     }
 
     @Test
     void shouldNotAllowDuplicateVotePerMemberPerTopic() {
-        repository.save(new Vote(TOPIC_ID, MEMBER_ID, VoteOption.SIM));
+        repository.save(new Vote(TOPIC_ID, MEMBER_ID, VoteOption.YES));
 
-        var duplicate = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.NAO);
+        var duplicate = new Vote(TOPIC_ID, MEMBER_ID, VoteOption.NO);
 
         assertThatThrownBy(() -> {
             repository.save(duplicate);
@@ -104,15 +104,15 @@ class VoteRepositoryTest {
 
     @Test
     void shouldAllowSameMemberToVoteOnDifferentTopics() {
-        repository.save(new Vote(1L, MEMBER_ID, VoteOption.SIM));
-        repository.save(new Vote(2L, MEMBER_ID, VoteOption.NAO));
+        repository.save(new Vote(1L, MEMBER_ID, VoteOption.YES));
+        repository.save(new Vote(2L, MEMBER_ID, VoteOption.NO));
 
         assertThat(repository.count()).isEqualTo(2);
     }
 
     @Test
     void shouldReturnTrueWhenMemberAlreadyVotedOnTopic() {
-        repository.save(new Vote(TOPIC_ID, MEMBER_ID, VoteOption.SIM));
+        repository.save(new Vote(TOPIC_ID, MEMBER_ID, VoteOption.YES));
 
         assertThat(repository.existsByTopicIdAndMemberId(TOPIC_ID, MEMBER_ID)).isTrue();
     }
@@ -124,14 +124,14 @@ class VoteRepositoryTest {
 
     @Test
     void shouldCountVotesByTopicAndOption() {
-        repository.save(new Vote(TOPIC_ID, "11111111111", VoteOption.SIM));
-        repository.save(new Vote(TOPIC_ID, "22222222222", VoteOption.SIM));
-        repository.save(new Vote(TOPIC_ID, "33333333333", VoteOption.NAO));
-        repository.save(new Vote(2L, "44444444444", VoteOption.SIM));
+        repository.save(new Vote(TOPIC_ID, "11111111111", VoteOption.YES));
+        repository.save(new Vote(TOPIC_ID, "22222222222", VoteOption.YES));
+        repository.save(new Vote(TOPIC_ID, "33333333333", VoteOption.NO));
+        repository.save(new Vote(2L, "44444444444", VoteOption.YES));
 
-        assertThat(repository.countByTopicIdAndOption(TOPIC_ID, VoteOption.SIM)).isEqualTo(2);
-        assertThat(repository.countByTopicIdAndOption(TOPIC_ID, VoteOption.NAO)).isEqualTo(1);
-        assertThat(repository.countByTopicIdAndOption(2L, VoteOption.SIM)).isEqualTo(1);
-        assertThat(repository.countByTopicIdAndOption(2L, VoteOption.NAO)).isZero();
+        assertThat(repository.countByTopicIdAndOption(TOPIC_ID, VoteOption.YES)).isEqualTo(2);
+        assertThat(repository.countByTopicIdAndOption(TOPIC_ID, VoteOption.NO)).isEqualTo(1);
+        assertThat(repository.countByTopicIdAndOption(2L, VoteOption.YES)).isEqualTo(1);
+        assertThat(repository.countByTopicIdAndOption(2L, VoteOption.NO)).isZero();
     }
 }

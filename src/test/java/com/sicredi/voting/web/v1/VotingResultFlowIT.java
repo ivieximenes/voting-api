@@ -38,9 +38,9 @@ class VotingResultFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic with more yes", null);
         openSession(topicId, 60);
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
-        registerVote(topicId, VALID_CPF_2, VoteOption.SIM);
-        registerVote(topicId, VALID_CPF_3, VoteOption.NAO);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
+        registerVote(topicId, VALID_CPF_2, VoteOption.YES);
+        registerVote(topicId, VALID_CPF_3, VoteOption.NO);
 
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))
                 .andExpect(status().isOk())
@@ -54,9 +54,9 @@ class VotingResultFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic with more no", null);
         openSession(topicId, 60);
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.NAO);
-        registerVote(topicId, VALID_CPF_2, VoteOption.NAO);
-        registerVote(topicId, VALID_CPF_3, VoteOption.SIM);
+        registerVote(topicId, VALID_CPF_1, VoteOption.NO);
+        registerVote(topicId, VALID_CPF_2, VoteOption.NO);
+        registerVote(topicId, VALID_CPF_3, VoteOption.YES);
 
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))
                 .andExpect(status().isOk())
@@ -70,8 +70,8 @@ class VotingResultFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic with tie", null);
         openSession(topicId, 60);
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
-        registerVote(topicId, VALID_CPF_2, VoteOption.NAO);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
+        registerVote(topicId, VALID_CPF_2, VoteOption.NO);
 
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))
                 .andExpect(status().isOk())
@@ -85,7 +85,7 @@ class VotingResultFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic with closed session", null);
         openSession(topicId, 1); // 1 segundo
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
 
         Thread.sleep(1500); // aguarda a sessao encerrar
 

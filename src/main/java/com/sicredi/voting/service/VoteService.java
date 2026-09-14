@@ -63,8 +63,8 @@ public class VoteService {
         Topic topic = topicService.findById(topicId);
         Optional<VotingSession> session = sessionService.findOptionalByTopicId(topicId);
 
-        long yesVotes = voteRepository.countByTopicIdAndOption(topicId, VoteOption.SIM);
-        long noVotes = voteRepository.countByTopicIdAndOption(topicId, VoteOption.NAO);
+        long yesVotes = voteRepository.countByTopicIdAndOption(topicId, VoteOption.YES);
+        long noVotes = voteRepository.countByTopicIdAndOption(topicId, VoteOption.NO);
 
         Instant now = Instant.now();
         boolean sessionClosed = session.isPresent() && !session.get().isOpen(now);

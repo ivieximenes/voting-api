@@ -62,10 +62,10 @@ class VoteServiceTest {
         doNothing().when(memberValidationService).validate(VALID_CPF);
         when(voteRepository.save(any(Vote.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Vote vote = voteService.vote(1L, VALID_CPF, VoteOption.SIM);
+        Vote vote = voteService.vote(1L, VALID_CPF, VoteOption.YES);
 
         assertThat(vote.getMemberId()).isEqualTo(VALID_CPF);
-        assertThat(vote.getOption()).isEqualTo(VoteOption.SIM);
+        assertThat(vote.getOption()).isEqualTo(VoteOption.YES);
         verify(memberValidationService).validate(VALID_CPF);
     }
 
@@ -76,7 +76,7 @@ class VoteServiceTest {
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findByTopicId(1L)).thenReturn(session);
 
-        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.SIM))
+        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.YES))
                 .isInstanceOfSatisfying(ResponseStatusException.class,
                         ex -> assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY));
     }
@@ -91,7 +91,7 @@ class VoteServiceTest {
                         HttpStatus.UNPROCESSABLE_ENTITY, "Associado não elegível"))
                 .when(memberValidationService).validate(VALID_CPF);
 
-        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.SIM))
+        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.YES))
                 .isInstanceOfSatisfying(ResponseStatusException.class,
                         ex -> assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY));
     }
@@ -106,7 +106,7 @@ class VoteServiceTest {
         when(voteRepository.save(any(Vote.class)))
                 .thenThrow(new DataIntegrityViolationException("duplicate"));
 
-        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.SIM))
+        assertThatThrownBy(() -> voteService.vote(1L, VALID_CPF, VoteOption.YES))
                 .isInstanceOfSatisfying(ResponseStatusException.class,
                         ex -> assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.CONFLICT));
     }
@@ -116,8 +116,8 @@ class VoteServiceTest {
         Topic topic = new Topic("Title", "Desc");
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findOptionalByTopicId(1L)).thenReturn(Optional.empty());
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.SIM)).thenReturn(3L);
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NAO)).thenReturn(3L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.YES)).thenReturn(3L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NO)).thenReturn(3L);
 
         VotingResult result = voteService.tally(1L);
 
@@ -131,8 +131,8 @@ class VoteServiceTest {
         Topic topic = new Topic("Title", "Desc");
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findOptionalByTopicId(1L)).thenReturn(Optional.empty());
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.SIM)).thenReturn(5L);
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NAO)).thenReturn(2L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.YES)).thenReturn(5L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NO)).thenReturn(2L);
 
         VotingResult result = voteService.tally(1L);
 
@@ -146,8 +146,8 @@ class VoteServiceTest {
         Topic topic = new Topic("Title", "Desc");
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findOptionalByTopicId(1L)).thenReturn(Optional.empty());
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.SIM)).thenReturn(2L);
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NAO)).thenReturn(5L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.YES)).thenReturn(2L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NO)).thenReturn(5L);
 
         VotingResult result = voteService.tally(1L);
 
@@ -161,8 +161,8 @@ class VoteServiceTest {
         Topic topic = new Topic("Title", "Desc");
         when(topicService.findById(1L)).thenReturn(topic);
         when(sessionService.findOptionalByTopicId(1L)).thenReturn(Optional.empty());
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.SIM)).thenReturn(0L);
-        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NAO)).thenReturn(0L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.YES)).thenReturn(0L);
+        when(voteRepository.countByTopicIdAndOption(1L, VoteOption.NO)).thenReturn(0L);
 
         VotingResult result = voteService.tally(1L);
 
