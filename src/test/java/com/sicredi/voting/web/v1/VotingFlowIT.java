@@ -32,8 +32,8 @@ class VotingFlowIT extends AbstractIntegrationTest {
         openSession(topicId, 5);
 
         // 3. Registra votos
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
-        registerVote(topicId, VALID_CPF_2, VoteOption.NAO);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
+        registerVote(topicId, VALID_CPF_2, VoteOption.NO);
 
         // 4. Apura resultado
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))

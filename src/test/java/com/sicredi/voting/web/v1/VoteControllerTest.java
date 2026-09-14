@@ -40,9 +40,9 @@ class VoteControllerTest {
 
     @Test
     void shouldRegisterVote() throws Exception {
-        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.SIM);
-        var vote = new Vote(1L, VALID_CPF, VoteOption.SIM);
-        when(voteService.vote(eq(1L), eq(VALID_CPF), eq(VoteOption.SIM))).thenReturn(vote);
+        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.YES);
+        var vote = new Vote(1L, VALID_CPF, VoteOption.YES);
+        when(voteService.vote(eq(1L), eq(VALID_CPF), eq(VoteOption.YES))).thenReturn(vote);
 
         mockMvc.perform(post("/api/v1/topics/{topicId}/votes", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -50,13 +50,13 @@ class VoteControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.topicId").value(1L))
                 .andExpect(jsonPath("$.memberId").value(VALID_CPF))
-                .andExpect(jsonPath("$.option").value("SIM"))
+                .andExpect(jsonPath("$.option").value("YES"))
                 .andExpect(jsonPath("$.votedAt").exists());
     }
 
     @Test
     void shouldReturn400WhenMemberIdIsBlank() throws Exception {
-        var request = new RegisterVoteRequest("", VoteOption.SIM);
+        var request = new RegisterVoteRequest("", VoteOption.YES);
 
         mockMvc.perform(post("/api/v1/topics/{topicId}/votes", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -66,7 +66,7 @@ class VoteControllerTest {
 
     @Test
     void shouldReturn400WhenMemberIdHasInvalidLength() throws Exception {
-        var request = new RegisterVoteRequest("123", VoteOption.SIM);
+        var request = new RegisterVoteRequest("123", VoteOption.YES);
 
         mockMvc.perform(post("/api/v1/topics/{topicId}/votes", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ class VoteControllerTest {
 
     @Test
     void shouldReturn404WhenTopicDoesNotExist() throws Exception {
-        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.SIM);
+        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.YES);
         when(voteService.vote(eq(99L), any(), any()))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Pauta não encontrada"));
 
@@ -98,7 +98,7 @@ class VoteControllerTest {
 
     @Test
     void shouldReturn409WhenVoteIsDuplicated() throws Exception {
-        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.SIM);
+        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.YES);
         when(voteService.vote(eq(1L), any(), any()))
                 .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Voto duplicado"));
 
@@ -110,7 +110,7 @@ class VoteControllerTest {
 
     @Test
     void shouldReturn422WhenSessionIsClosed() throws Exception {
-        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.SIM);
+        var request = new RegisterVoteRequest(VALID_CPF, VoteOption.YES);
         when(voteService.vote(eq(1L), any(), any()))
                 .thenThrow(new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Sessão encerrada"));
 

@@ -10,7 +10,7 @@ class VoteTest {
     void shouldCreateVoteWithTopicMemberAndOption() {
         var topicId = 1L;
         var memberId = "12345678900";
-        var option = VoteOption.NAO;
+        var option = VoteOption.NO;
 
         var vote = new Vote(topicId, memberId, option);
 
@@ -23,15 +23,15 @@ class VoteTest {
 
     @Test
     void shouldSupportVoteWithOptionNO() {
-        var vote = new Vote(1L, "12345678900", VoteOption.NAO);
+        var vote = new Vote(1L, "12345678900", VoteOption.NO);
 
-        assertThat(vote.getOption()).isEqualTo(VoteOption.NAO);
+        assertThat(vote.getOption()).isEqualTo(VoteOption.NO);
     }
 
     @Test
     void shouldAcceptCpfWithMaxLength11() {
         var cpf = "12345678901";
-        var vote = new Vote(1L, cpf, VoteOption.SIM);
+        var vote = new Vote(1L, cpf, VoteOption.YES);
 
         assertThat(vote.getMemberId()).hasSize(11).isEqualTo(cpf);
     }

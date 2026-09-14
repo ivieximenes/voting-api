@@ -24,7 +24,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic for voting", null);
         openSession(topicId, 60);
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
 
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))
                 .andExpect(status().isOk())
@@ -38,8 +38,8 @@ class VoteFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic with more yes", null);
         openSession(topicId, 60);
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
-        registerVote(topicId, VALID_CPF_2, VoteOption.SIM);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
+        registerVote(topicId, VALID_CPF_2, VoteOption.YES);
 
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))
                 .andExpect(status().isOk())
@@ -53,8 +53,8 @@ class VoteFlowIT extends AbstractIntegrationTest {
         Long topicId = createTopic("Topic with more no", null);
         openSession(topicId, 60);
 
-        registerVote(topicId, VALID_CPF_1, VoteOption.NAO);
-        registerVote(topicId, VALID_CPF_2, VoteOption.NAO);
+        registerVote(topicId, VALID_CPF_1, VoteOption.NO);
+        registerVote(topicId, VALID_CPF_2, VoteOption.NO);
 
         mockMvc.perform(get("/api/v1/topics/{id}/result", topicId))
                 .andExpect(status().isOk())
@@ -80,7 +80,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
     void shouldReturn409WhenMemberVotesTwiceOnSameTopic() throws Exception {
         Long topicId = createTopic("Topic with duplicate vote", null);
         openSession(topicId, 60);
-        registerVote(topicId, VALID_CPF_1, VoteOption.SIM);
+        registerVote(topicId, VALID_CPF_1, VoteOption.YES);
 
         mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
                         .contentType(APPLICATION_JSON)
