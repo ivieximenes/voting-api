@@ -50,6 +50,8 @@ public class VoteService {
             Vote vote = new Vote(topicId, memberId, option);
             return voteRepository.save(vote);
         } catch (DataIntegrityViolationException e) {
+            // A checagem de "já votou" fica a cargo da constraint única do banco;
+            // aqui só traduzimos a violação para uma resposta HTTP adequada.
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Associado já votou nesta pauta: topicId=" + topicId + ", memberId=" + memberId);

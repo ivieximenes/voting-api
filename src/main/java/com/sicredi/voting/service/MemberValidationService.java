@@ -29,6 +29,8 @@ public class MemberValidationService {
                     "CPF inválido: " + memberId);
         }
 
+        // Toggle para desligar a chamada ao serviço externo (ex: testes, ambiente sem rede),
+        // sem precisar mockar o RestClient inteiro.
         if (!enabled) {
             return;
         }
@@ -57,6 +59,7 @@ public class MemberValidationService {
         } catch (ResponseStatusException e) {
             throw e;
         } catch (RestClientException e) {
+            // Timeout, DNS, conexão recusada etc: falha do serviço externo, não do cliente.
             throw new ResponseStatusException(
                     HttpStatus.SERVICE_UNAVAILABLE,
                     "Serviço de validação de associado indisponível no momento",

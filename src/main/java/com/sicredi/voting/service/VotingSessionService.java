@@ -32,6 +32,8 @@ public class VotingSessionService {
     public VotingSession open(Long topicId, Integer durationSeconds) {
         topicService.findById(topicId);
 
+        // Checagem otimista para responder rápido no caso comum;
+        // a garantia real contra corrida é a constraint única em topic_id (catch abaixo).
         if (sessionRepository.existsByTopicId(topicId)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
