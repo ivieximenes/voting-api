@@ -25,6 +25,8 @@ spring:
 sicredi:
   voting:
     default-session-duration: 60s
+  app:
+    base-url: ${APP_BASE_URL:http://localhost:8080}
   member-validation:
     enabled: true
     base-url: https://user-info-woad.vercel.app
