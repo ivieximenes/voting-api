@@ -69,7 +69,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
         mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
                         .contentType(APPLICATION_JSON)
                         .content("""
-                                {"memberId":"%s","option":"SIM"}
+                                {"memberId":"%s","option":"YES"}
                                 """.formatted(VALID_CPF_1)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
@@ -85,7 +85,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
         mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
                         .contentType(APPLICATION_JSON)
                         .content("""
-                                {"memberId":"%s","option":"NAO"}
+                                {"memberId":"%s","option":"NO"}
                                 """.formatted(VALID_CPF_1)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
@@ -100,7 +100,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
         mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
                         .contentType(APPLICATION_JSON)
                         .content("""
-                                {"option":"SIM"}
+                                {"option":"YES"}
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
@@ -114,7 +114,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
         mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
                         .contentType(APPLICATION_JSON)
                         .content("""
-                                {"memberId":"123","option":"SIM"}
+                                {"memberId":"123","option":"YES"}
                                 """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
@@ -130,7 +130,7 @@ class VoteFlowIT extends AbstractIntegrationTest {
         mockMvc.perform(post("/api/v1/topics/{id}/votes", topicId)
                         .contentType(APPLICATION_JSON)
                         .content("""
-                                {"memberId":"%s","option":"SIM"}
+                                {"memberId":"%s","option":"YES"}
                                 """.formatted(VALID_CPF_1)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.status").value(422))
