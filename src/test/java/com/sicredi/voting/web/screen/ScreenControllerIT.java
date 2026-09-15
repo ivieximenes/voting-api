@@ -146,9 +146,9 @@ class ScreenControllerIT extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.itens[0].texto").value("Sim"))
                 .andExpect(jsonPath("$.itens[0].url")
                         .value(baseUrl + "/api/v1/topics/" + topicId + "/votes"))
-                .andExpect(jsonPath("$.itens[0].body.option").value("SIM"))
+                .andExpect(jsonPath("$.itens[0].body.option").value("YES"))
                 .andExpect(jsonPath("$.itens[1].texto").value("Não"))
-                .andExpect(jsonPath("$.itens[1].body.option").value("NAO"));
+                .andExpect(jsonPath("$.itens[1].body.option").value("NO"));
     }
 
     // ------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package com.sicredi.voting.domain;
 
+import com.sicredi.voting.enums.SessionStatus;
 import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,5 +76,49 @@ class VotingSessionTest {
         var session = new VotingSession(1L, minimalDuration, OPENED_AT);
 
         assertThat(session.getDurationSeconds()).isEqualTo(minimalDuration);
+    }
+
+    @Test
+    void shouldBeOpenNowWhenCreatedWithLongDuration() {
+        var session = new VotingSession(1L, 3600, Instant.now());
+
+        assertThat(session.isOpen()).isTrue();
+    }
+
+    @Test
+    void shouldNotBeOpenNowWhenAlreadyClosed() {
+        var session = new VotingSession(1L, 1, Instant.now().minusSeconds(10));
+
+        assertThat(session.isOpen()).isFalse();
+    }
+
+    @Test
+    void shouldReturnOpenStatusWhileSessionIsOpen() {
+        var session = new VotingSession(1L, 3600, OPENED_AT);
+        var beforeClose = session.getClosesAt().minusSeconds(1);
+
+        assertThat(session.status(beforeClose)).isEqualTo(SessionStatus.OPEN);
+    }
+
+    @Test
+    void shouldReturnClosedStatusAfterClosesAt() {
+        var session = new VotingSession(1L, 60, OPENED_AT);
+        var afterClose = session.getClosesAt().plusSeconds(1);
+
+        assertThat(session.status(afterClose)).isEqualTo(SessionStatus.CLOSED);
+    }
+
+    @Test
+    void shouldReturnOpenStatusNowWhenCreatedWithLongDuration() {
+        var session = new VotingSession(1L, 3600, Instant.now());
+
+        assertThat(session.status()).isEqualTo(SessionStatus.OPEN);
+    }
+
+    @Test
+    void shouldReturnClosedStatusNowWhenAlreadyClosed() {
+        var session = new VotingSession(1L, 1, Instant.now().minusSeconds(10));
+
+        assertThat(session.status()).isEqualTo(SessionStatus.CLOSED);
     }
 }

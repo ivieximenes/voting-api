@@ -2,19 +2,19 @@ package com.sicredi.voting.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sicredi.voting.enums.VoteOption;
+import com.sicredi.voting.repository.TopicRepository;
+import com.sicredi.voting.repository.VoteRepository;
+import com.sicredi.voting.repository.VotingSessionRepository;
 import com.sicredi.voting.web.dto.CreateTopicRequest;
 import com.sicredi.voting.web.dto.OpenSessionRequest;
 import com.sicredi.voting.web.dto.RegisterVoteRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,18 +25,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Testcontainers
-public abstract class AbstractIntegrationTest {
-
-    @Container
-    @ServiceConnection
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+public abstract class AbstractIntegrationTest extends PostgresContainerSupport {
 
     @Autowired
     protected MockMvc mockMvc;
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    private VoteRepository voteRepository;
+
+    @Autowired
+    private VotingSessionRepository votingSessionRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @BeforeEach
+    void cleanDatabase() {
+        voteRepository.deleteAll();
+        votingSessionRepository.deleteAll();
+        topicRepository.deleteAll();
+    }
 
     protected Long createTopic(String title, String description) throws Exception {
         var request = new CreateTopicRequest(title, description);

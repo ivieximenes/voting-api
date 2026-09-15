@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
@@ -21,19 +22,21 @@ public class VoteService {
     private final TopicService topicService;
     private final VotingSessionService sessionService;
     private final MemberValidationService memberValidationService;
+    private final TransactionTemplate transactionTemplate;
 
     public VoteService(
             VoteRepository voteRepository,
             TopicService topicService,
             VotingSessionService sessionService,
-            MemberValidationService memberValidationService) {
+            MemberValidationService memberValidationService,
+            TransactionTemplate transactionTemplate) {
         this.voteRepository = voteRepository;
         this.topicService = topicService;
         this.sessionService = sessionService;
         this.memberValidationService = memberValidationService;
+        this.transactionTemplate = transactionTemplate;
     }
 
-    @Transactional
     public Vote vote(Long topicId, String memberId, VoteOption option) {
         topicService.findById(topicId);
 
@@ -46,16 +49,17 @@ public class VoteService {
 
         memberValidationService.validate(memberId);
 
-        try {
-            Vote vote = new Vote(topicId, memberId, option);
-            return voteRepository.save(vote);
-        } catch (DataIntegrityViolationException e) {
-            // A checagem de "já votou" fica a cargo da constraint única do banco;
-            // aqui só traduzimos a violação para uma resposta HTTP adequada.
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Associado já votou nesta pauta: topicId=" + topicId + ", memberId=" + memberId);
-        }
+        return transactionTemplate.execute(status -> {
+            try {
+                Vote vote = new Vote(topicId, memberId, option);
+                return voteRepository.save(vote);
+            } catch (DataIntegrityViolationException e) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Associado já votou nesta pauta: topicId=" + topicId
+                                + ", memberId=" + memberId);
+            }
+        });
     }
 
     @Transactional(readOnly = true)

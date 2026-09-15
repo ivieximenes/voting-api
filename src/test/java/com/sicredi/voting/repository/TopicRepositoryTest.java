@@ -1,29 +1,28 @@
 package com.sicredi.voting.repository;
 
 import com.sicredi.voting.domain.Topic;
+import com.sicredi.voting.support.PostgresContainerSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers 
+// Container Postgres compartilhado herdado de PostgresContainerSupport
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class TopicRepositoryTest {
-
-    @Container 
-    @ServiceConnection 
-        static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+class TopicRepositoryTest extends PostgresContainerSupport {
 
     @Autowired
     private TopicRepository repository;
+
+    @BeforeEach
+    void setUp() {
+        repository.deleteAll();
+    }
 
     @Test
     void shouldSaveTopic() {
@@ -77,8 +76,6 @@ class TopicRepositoryTest {
 
     @Test
     void shouldCountTopics() {
-        repository.deleteAll(); 
-
         repository.save(new Topic("Pauta 1", "Desc 1"));
         repository.save(new Topic("Pauta 2", "Desc 2"));
         repository.save(new Topic("Pauta 3", null));
